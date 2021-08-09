@@ -1,0 +1,22 @@
+
+
+trigger:
+- main
+
+# This will create a startegy and then you can use the variable (operating system)
+# in pool so that way both agents are being used 
+strategy:
+ matrix:
+   linux:
+     operatingSystem: 'ubuntu-latest'
+     mac:
+       operatingSystem: 'macos-latest'
+
+pool:
+  vmImage: $(operatingSystem)
+
+steps:
+- script: echo running on $(operatingSystem)
+  displayName: 'Run a one-line script'
+
+
