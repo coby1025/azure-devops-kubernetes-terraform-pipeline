@@ -5,18 +5,37 @@ trigger:
 
 # This will create a startegy and then you can use the variable (operating system)
 # in pool so that way both agents are being used 
-strategy:
-  matrix:
-   linux:
-    operatingSystem: 'ubuntu-latest'
-   mac:
-    operatingSystem: 'macos-latest'
+# strategy:
+#   matrix:
+#    linux:
+#     operatingSystem: 'ubuntu-latest'
+#    mac:
+#     operatingSystem: 'macos-latest'
 
 pool:
   vmImage: $(operatingSystem)
+stages:
+ - stage: Build
+   jobs:
+   - job: BuildJob
+     steps:
+     - bash: echo "start Build"
 
-steps:
-- script: echo running on $(operatingSystem)
-  displayName: 'Run a one-line script'
-
-
+ - stage: DevDeploy
+   jobs:
+   - deployment: DevDeployJob
+     environment: Dev
+     strategy:
+      runOnce:
+        deploy:
+         steps:
+           - script: echo deploy to Dev
+ - stage: QADeploy
+   jobs:
+   - deployment: QADeployJob
+     environment: QA
+     strategy:
+      runOnce:
+        deploy:
+          steps:
+            - script: echo deploy to QA
